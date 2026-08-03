@@ -23,6 +23,7 @@ devicemapper = { version = "0.34.6", optional = true }
 filetime = "0.2"
 flate2 = "1.1"
 futures-util = "0.3"
+gcp_auth = "0.12"
 hex.workspace = true
 kbc = { path = "../attestation-agent/kbc", default-features = false, optional = true }
 loopdev = { git = "https://github.com/mdaffin/loopdev", rev = "c9f91e8f0326ce8a3364ac911e81eb32328a5f27" }

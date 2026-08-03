@@ -17,6 +17,9 @@ pub type AuthResult<T> = std::result::Result<T, AuthError>;
 pub enum AuthError {
     #[error("Invalid registry auth file")]
     InvalidRegistryAuthFile,
+
+    #[error("GCP auth error: {0}")]
+    GcpAuth(#[from] gcp_auth::Error),
 }
 
 #[derive(Deserialize, Serialize, Default)]
@@ -47,6 +50,22 @@ impl Auth {
         &self,
         reference: &Reference,
     ) -> AuthResult<RegistryAuth> {
+
+        if reference.registry().ends_with("-docker.pkg.dev") {
+            // 1. Get an access token minted as the pod's Workload Identity.
+            //    `provider()` auto-detects the GKE metadata server at runtime.
+            let provider = gcp_auth::provider().await?;
+            let scopes = &["https://www.googleapis.com/auth/cloud-platform"];
+            let token = provider.token(scopes).await?;
+
+            // 2. Artifact Registry accepts the token as a Basic-auth password,
+            //    with the fixed magic username `oauth2accesstoken`.
+            return Ok(RegistryAuth::Basic(
+                "oauth2accesstoken".to_string(),
+                token.as_str().to_string(),
+            ));
+        }
+
         // TODO: support credential helpers
         auth_config::credential_from_auth_config(reference, &self.docker_config_file.auths)
     }
