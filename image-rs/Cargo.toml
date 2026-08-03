@@ -24,6 +24,7 @@ filetime = "0.2"
 flate2 = "1.1"
 futures = { version = "0.3.32", optional = true }
 futures-util = "0.3"
+gcp_auth = "0.12"
 hex = { workspace = true, optional = true }
 kbc = { path = "../attestation-agent/kbc", default-features = false, optional = true }
 loopdev = { git = "https://github.com/mdaffin/loopdev", rev = "c9f91e8f0326ce8a3364ac911e81eb32328a5f27" }
